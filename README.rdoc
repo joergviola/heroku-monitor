@@ -6,11 +6,11 @@ Plugin that provides a simple monitoring for your heroku app.
 
 To install:
 
-    $ heroku plugins:install git://github.com/ddollar/heroku-sql-console.git
+    $ heroku plugins:install git@github.com:joergviola/heroku-monitor.git
 
 == Usage
 
-    $ heroku sql
+    $ heroku monitor
     SQL console for example.heroku.com
     SQL> SELECT * FROM users;
     +---------------------------------------------------------------------------------------------------------

@@ -11,17 +11,6 @@ class Heroku::Command::Monitor < Heroku::Command::Base
     register(app);
   end
 
-
-	def user    # :nodoc:
-	  get_credentials
-	  @credentials[0]
-	end
-	
-	def password    # :nodoc:
-	  get_credentials
-	  @credentials[1]
-	end
-	
 	def credentials_file
       "#{home_directory}/.heroku/credentials"
 	end
@@ -40,11 +29,12 @@ class Heroku::Command::Monitor < Heroku::Command::Base
 
   private
   def resource
-    @resource ||= RestClient::Resource.new("https://monitor.herokuapp.com")
+    @resource ||= RestClient::Resource.new("http://monitor.herokuapp.com")
   end
 
   def register(app)
     get_credentials
+    display "user #{credentials[0]}"
     resource["/register"].post(:app => app, :uid => @credentials[0], :pwd => @creadentials[1])
   rescue RestClient::InternalServerError
     display "An error has occurred."
