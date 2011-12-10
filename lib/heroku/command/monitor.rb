@@ -17,9 +17,7 @@ class Heroku::Command::Monitor < Heroku::Command::Base
 	
 	def get_credentials    # :nodoc:
 	  return if @credentials
-	  unless @credentials = read_credentials
-	    ask_for_and_save_credentials
-	  end
+	  @credentials = read_credentials
 	  @credentials
 	end
 	
@@ -34,7 +32,8 @@ class Heroku::Command::Monitor < Heroku::Command::Base
 
   def register(app)
     get_credentials
-    display "user #{credentials[0]}"
+    display "cf #{credentials_file}"
+    display "user #{@credentials[0]}"
     resource["/register"].post(:app => app, :uid => @credentials[0], :pwd => @creadentials[1])
   rescue RestClient::InternalServerError
     display "An error has occurred."
