@@ -32,9 +32,7 @@ class Heroku::Command::Monitor < Heroku::Command::Base
 
   def register(app)
     get_credentials
-    display "cf #{credentials_file}"
-    display "user #{@credentials[0]}"
-    resource["/register"].post(:app => app, :uid => @credentials[0], :pwd => @creadentials[1])
+    resource["/register"].post(:app => app, :uid => @credentials[0], :pwd => @credentials[1])
   rescue RestClient::InternalServerError
     display "An error has occurred."
   end
