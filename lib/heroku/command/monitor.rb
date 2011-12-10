@@ -27,7 +27,7 @@ class Heroku::Command::Monitor < Heroku::Command::Base
 
   private
   def resource
-    @resource ||= RestClient::Resource.new("http://monitor.herokuapp.com")
+    @resource ||= RestClient::Resource.new("http://heromon.herokuapp.com")
   end
 
   def register(app)
