@@ -7,18 +7,63 @@ class Heroku::Command::Monitor < Heroku::Command::Base
   #
   # register app with monitoring server
   #
-  # -d, --days NUM      # number of recent days to show
+  # -f, --frequency NUM      # number of minutes between snapshots
   #
   def index
     app = extract_app
     display "Starting monitoring for #{app}.#{heroku.host}"
-    register(app, options[:frequency]).to_s;
+    get_credentials
+    begin
+      @response = resource["/register"].post(:app => app, :apikey => @credentials[1], :frequency => options[:frequency])
+    rescue RestClient::InternalServerError
+      display "An error has occurred."
+    end
   end
 
+  # monitor:query
+  #
+  # query the app monitoring results
+  #
+  # -d, --days NUM      # number of recent days to show
+  # -u, --url STR       # number of recent days to show
+  # -m, --mode STR      # number of recent days to show
+  #
   def query
     app = extract_app
-    display options[:days] 
-    doQuery(app, options[:days], options[:url], options[:mode]).to_s;
+    begin
+      response = resource["/query/#{app}"].post(:days => options[:days], :url => options[:url], :mode => options[:mode])
+    rescue RestClient::InternalServerError
+      display "An error has occurred."
+    end
+    display response.to_s
+  end
+
+  # monitor:snapshot
+  #
+  # get a log snapshot
+  #
+  def snapshot
+    app = extract_app
+    begin
+      response = resource["/snapshot/#{app}"].post()
+    rescue RestClient::InternalServerError
+      display "An error has occurred."
+    end
+    display response.to_s
+  end
+
+  # monitor:analyse
+  #
+  # perform a log analysis, store and display the result
+  #
+  def snapshot
+    app = extract_app
+    begin
+      response = resource["/analyse/#{app}"].post()
+    rescue RestClient::InternalServerError
+      display "An error has occurred."
+    end
+    display response.to_s
   end
 
 	def credentials_file
@@ -40,22 +85,7 @@ class Heroku::Command::Monitor < Heroku::Command::Base
     @resource ||= RestClient::Resource.new("http://heromon.herokuapp.com")
   end
 
-  def doQuery(app, days, url, mode)
-    display "query #{app} #{days} #{url} #{mode}"
-    begin
-      response = resource["/query/#{app}"].post(:days => days, :url => url, :mode => mode)
-    rescue RestClient::InternalServerError
-      display "An error has occurred."
-    end
-    display "-> #{response.to_s}"
-    response
-  end
-
   def register(app, frequency)
-    get_credentials
-    @response = resource["/register"].post(:app => app, :apikey => @credentials[1], :frequency => frequency)
-  rescue RestClient::InternalServerError
-    display "An error has occurred."
   end
 
 end
