@@ -45,7 +45,7 @@ class Heroku::Command::Monitor < Heroku::Command::Base
   def snapshot
     app = extract_app
     begin
-      response = resource["/snapshot/#{app}"].post()
+      response = resource["/snapshot/#{app}"].post(nil)
     rescue RestClient::InternalServerError
       display "An error has occurred."
     end
@@ -56,10 +56,10 @@ class Heroku::Command::Monitor < Heroku::Command::Base
   #
   # perform a log analysis, store and display the result
   #
-  def snapshot
+  def analyse
     app = extract_app
     begin
-      response = resource["/analyse/#{app}"].post()
+      response = resource["/analyse/#{app}"].post(nil)
     rescue RestClient::InternalServerError
       display "An error has occurred."
     end
