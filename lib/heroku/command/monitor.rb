@@ -8,7 +8,12 @@ class Heroku::Command::Monitor < Heroku::Command::Base
   def index
     app = extract_app
     display "Starting monitoring for #{app}.#{heroku.host}"
-    register(app);
+    register(app, options[:frequency]).to_s;
+  end
+
+  def query
+    app = extract_app
+    query(app, options[:days], options[:url], options[:mode]).to_s;
   end
 
 	def credentials_file
@@ -30,11 +35,18 @@ class Heroku::Command::Monitor < Heroku::Command::Base
     @resource ||= RestClient::Resource.new("http://heromon.herokuapp.com")
   end
 
-  def register(app)
-    get_credentials
-    resource["/register"].post(:app => app, :uid => @credentials[0], :pwd => @credentials[1])
+  def query(app, days, url, mode)
+    resource["/query/#{app}"].post(:days => days, :url => url, :mode => mode)
   rescue RestClient::InternalServerError
     display "An error has occurred."
   end
 
+  def register(app, frequency)
+    get_credentials
+    response = resource["/register"].post(:app => app, :apikey => @credentials[1], :frequency => frequency)
+  rescue RestClient::InternalServerError
+    display "An error has occurred."
+  end
+
+  response
 end
