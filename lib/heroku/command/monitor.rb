@@ -14,10 +14,11 @@ class Heroku::Command::Monitor < Heroku::Command::Base
     display "Starting monitoring for #{app}.#{heroku.host}"
     get_credentials
     begin
-      @response = resource["/register"].post(:app => app, :apikey => @credentials[1], :frequency => options[:frequency])
+      response = resource["/register"].post(:app => app, :apikey => @credentials[1], :frequency => options[:frequency])
     rescue RestClient::InternalServerError
       display "An error has occurred."
     end
+    display response.to_s
   end
 
   # monitor:query
