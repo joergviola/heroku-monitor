@@ -10,7 +10,6 @@ class Heroku::Command::Monitor < Heroku::Command::Base
   # -f, --frequency NUM      # number of minutes between snapshots
   #
   def index
-    app = extract_app
     display "Starting monitoring for #{app}.#{heroku.host}"
     get_credentials
     begin
@@ -28,7 +27,6 @@ class Heroku::Command::Monitor < Heroku::Command::Base
   # -f, --frequency NUM      # number of minutes between snapshots
   #
   def update
-    app = extract_app
     get_credentials
     begin
       response = resource["/update/#{app}"].post(:apikey => @credentials[1], :frequency => options[:frequency])
@@ -44,7 +42,6 @@ class Heroku::Command::Monitor < Heroku::Command::Base
   # remove the app - with all results
   #
   def remove
-    app = extract_app
     get_credentials
     begin
       response = resource["/remove/#{app}"].post(:apikey => @credentials[1])
@@ -64,7 +61,6 @@ class Heroku::Command::Monitor < Heroku::Command::Base
   # -m, --mode STR      # number of recent days to show
   #
   def query
-    app = extract_app
     begin
       response = resource["/query/#{app}"].post(:days => options[:days], :url => options[:url], :mode => options[:mode])
     rescue RestClient::InternalServerError
@@ -78,7 +74,6 @@ class Heroku::Command::Monitor < Heroku::Command::Base
   # get a log snapshot
   #
   def snapshot
-    app = extract_app
     begin
       response = resource["/snapshot/#{app}"].post(nil)
     rescue RestClient::InternalServerError
@@ -92,7 +87,6 @@ class Heroku::Command::Monitor < Heroku::Command::Base
   # perform a log analysis, store and display the result
   #
   def analyse
-    app = extract_app
     begin
       response = resource["/analyse/#{app}"].post(nil)
     rescue RestClient::InternalServerError
@@ -118,9 +112,6 @@ class Heroku::Command::Monitor < Heroku::Command::Base
   private
   def resource
     @resource ||= RestClient::Resource.new("http://heromon.herokuapp.com")
-  end
-
-  def register(app, frequency)
   end
 
 end
