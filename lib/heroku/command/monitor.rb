@@ -21,6 +21,40 @@ class Heroku::Command::Monitor < Heroku::Command::Base
     display response.to_s
   end
 
+  # monitor:update
+  #
+  # update app monitoring frequency
+  #
+  # -f, --frequency NUM      # number of minutes between snapshots
+  #
+  def update
+    app = extract_app
+    get_credentials
+    begin
+      response = resource["/update/#{app}"].post(:apikey => @credentials[1], :frequency => options[:frequency])
+    rescue RestClient::InternalServerError
+      display "An error has occurred."
+    end
+    display response.to_s
+  end
+
+
+  # monitor:remove
+  #
+  # remove the app - with all results
+  #
+  def remove
+    app = extract_app
+    get_credentials
+    begin
+      response = resource["/remove/#{app}"].post(:apikey => @credentials[1])
+    rescue RestClient::InternalServerError
+      display "An error has occurred."
+    end
+    display response.to_s
+  end
+
+
   # monitor:query
   #
   # query the app monitoring results
